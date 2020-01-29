@@ -4,16 +4,22 @@
 
 const tela = document.querySelector('[flappy]')
 
-const VELOCIDADE_MOVIMENTO_CANOS = 1 // ms (melhor 1ms)
-const VELOCIDADE_CRIACAO_CANOS = 2000 // ms (melhor 2s)
+const VELOCIDADE_MOVIMENTO_CANOS = 5 // ms (melhor 5ms)
+const VELOCIDADE_CRIACAO_CANOS = 2500 // ms (melhor 2s)
 const LIMITE_DA_TELA = -100 // px (melhor -100px)
 const PASSO_MOVIMENTO_CANOS = 1 // px (melhor 1px)
-const ESPACO_ENTRE_CANOS = 20 // % (melhor 20%)
+const ESPACO_ENTRE_CANOS = 25 // % (melhor 20%)
 const TAMANH0_MAXIMO_CANO = 70 // % (melhor 70%)
 const MAXIMO_DE_CANOS_NA_TELA = 8 // n (melhor > 5 && < 10)
-const PASSO_VOO_PASSARO = 200 // px (melhor 150px)
-const PASSO_QUEDA_PASSARO = 30 // px (melhor 20px)
-const VELOCIDADE_QUEDA_PASSARO = 50 // ms (melhor 50ms)
+const PASSO_VOO_PASSARO = 150 // px (melhor 200px)
+const PASSO_QUEDA_PASSARO = 15 // px (melhor 30px)
+const VELOCIDADE_QUEDA_PASSARO = 30 // ms (melhor 50ms)
+const POSICICAO_INICIAL_PASSARO_LEFT = 2000 // px
+const POSICAO_INICIAL_PASSARO_TOP = 500 // px
+
+var intervalo_mover_canos = 0
+var intervalo_adicionar_canos = 0
+var intervalo_cair_passaro = 0
 
 function criarElementoPorObjeto(objeto) {
     const elemento = document.createElement(objeto.nome)
@@ -35,10 +41,53 @@ function criarElementoPorObjeto(objeto) {
 const btnPlay = document.querySelector('[play]')
 btnPlay.onclick = play
 
+const divPontuacao = document.querySelector('[pontuar]')
+window.pontuacao = 0
+
 function play() {
-    btnPlay.style.display = 'none'
+    removerElementos()
+    esconderMenuEAbrirPontuacao()
     criarEConfigurarPassaro()
     motorMoverECriarCanos()
+}
+
+function esconderMenuEAbrirPontuacao() {
+    btnPlay.style.display = 'none'
+    divPontuacao.style.display = 'block'
+}
+
+function gameover() {
+    pararJogo()
+    mostrarPontuacaoFinal()
+    zerarPontuacao()
+}
+
+function pararJogo() {
+    clearInterval(intervalo_mover_canos)
+    clearInterval(intervalo_adicionar_canos)
+    clearInterval(intervalo_cair_passaro)
+    window.onkeypress = null
+}
+
+function removerElementos() {
+    if (window.passaro) passaro.remove()
+    document.querySelectorAll('.canos')
+        .forEach(parDeCanos => parDeCanos.remove())
+}
+
+function mostrarPontuacaoFinal() {
+    btnPlay.lastElementChild.innerHTML = `Final Score: ${pontuacao}`
+    btnPlay.style.display = 'block'
+}
+
+function zerarPontuacao() {
+    pontuacao = 0    
+    divPontuacao.innerHTML = pontuacao
+}
+
+function marcarPonto() {
+    pontuacao++
+    divPontuacao.innerHTML = pontuacao
 }
 
 /*************************
@@ -100,6 +149,7 @@ function moverCanos() {
             parDeCanos.remove()
         } else {
             parDeCanos.style.left = `${novaPosicao}px`
+            verificarColisaoComPassaro(novaPosicao, parDeCanos)
         }
 
     })
@@ -107,8 +157,25 @@ function moverCanos() {
 
 function motorMoverECriarCanos() {
     adicionarCanosNaTela()
-    setInterval(moverCanos, VELOCIDADE_MOVIMENTO_CANOS)
-    setInterval(adicionarCanosNaTela, VELOCIDADE_CRIACAO_CANOS)
+    intervalo_mover_canos = setInterval(moverCanos, VELOCIDADE_MOVIMENTO_CANOS)
+    intervalo_adicionar_canos = setInterval(adicionarCanosNaTela, VELOCIDADE_CRIACAO_CANOS)
+}
+
+function verificarColisaoComPassaro(posicaoCanos, parDeCanos) {
+    const posicaoPassaro = Number.parseInt(passaro.style.left) + passaro.clientWidth
+    const alturaPassaro = Number.parseInt(passaro.style.top)
+    const tamanhoCanoDeCima = parDeCanos.firstElementChild.clientHeight
+    const alturaCanoDeBaixo = parDeCanos.lastElementChild.offsetTop - passaro.clientHeight
+
+    if (posicaoCanos <= posicaoPassaro && posicaoCanos + parDeCanos.offsetWidth >= posicaoPassaro) {
+        if (alturaPassaro > tamanhoCanoDeCima && alturaPassaro < alturaCanoDeBaixo) {
+            if (posicaoPassaro == posicaoCanos) {
+                marcarPonto()
+            }
+        } else {
+            gameover()
+        }
+    }
 }
 
 /*************************
@@ -121,8 +188,8 @@ const criarPassaro = () => {
             nome: 'div',
             classes: ['passaro'],
             estilos: {
-                top: '500px',
-                left: '100px'
+                top: `${POSICAO_INICIAL_PASSARO_TOP}px`,
+                left: `${POSICICAO_INICIAL_PASSARO_LEFT}px`
             }
         })
     }
@@ -131,7 +198,7 @@ const criarPassaro = () => {
 
 var ultima_queda = 0;
 
-function voarPassaro(passaro) {
+function voarPassaro() {
     clearTimeout(ultima_queda)
     passaro.classList.add('voando')
     ultima_queda = setTimeout(() => {
@@ -144,7 +211,7 @@ function voarPassaro(passaro) {
     passaro.style.top = `${novaAltura}px`
 }
 
-function cairPassaro(passaro) {
+function cairPassaro() {
     let alturaAtual = Number.parseInt(passaro.style.top)
     let novaAltura = alturaAtual + PASSO_QUEDA_PASSARO
 
@@ -155,19 +222,19 @@ function cairPassaro(passaro) {
     }
 }
 
-function configurarEventListeners(passaro) {
-    window.onkeypress = () => voarPassaro(passaro)
-    
+function configurarEventListeners() {
+    window.onkeypress = () => voarPassaro()
+
 }
 
-function comecarQuedaPassaro(passaro) {
-    setInterval(() => cairPassaro(passaro), VELOCIDADE_QUEDA_PASSARO)
+function comecarQuedaPassaro() {
+    intervalo_cair_passaro = setInterval(cairPassaro, VELOCIDADE_QUEDA_PASSARO)
 }
 
 function criarEConfigurarPassaro() {
-    const passaro = criarPassaro()
-    comecarQuedaPassaro(passaro)
-    configurarEventListeners(passaro)
+    window.passaro = criarPassaro()
+    comecarQuedaPassaro()
+    configurarEventListeners()
 
     tela.appendChild(passaro)
 }
