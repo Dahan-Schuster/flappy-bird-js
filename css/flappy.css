@@ -1,0 +1,89 @@
+@font-face {
+    font-family: 'Pixel';
+    src: url('../fonts/Pixel.ttf')  format('truetype')
+  }
+
+.conteudo {
+    overflow: hidden;
+}
+
+[flappy] {
+    background: -moz-linear-gradient(90deg, rgba(153, 218, 255, 1) 0%, rgba(0, 128, 128, 1) 100%);
+    /* ff3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(0, 128, 128, 1)), color-stop(100%, rgba(153, 218, 255, 1)));
+    /* safari4+,chrome */
+    background: -webkit-linear-gradient(90deg, rgba(153, 218, 255, 1) 0%, rgba(0, 128, 128, 1) 100%);
+    /* safari5.1+,chrome10+ */
+    background: -o-linear-gradient(90deg, rgba(153, 218, 255, 1) 0%, rgba(0, 128, 128, 1) 100%);
+    /* opera 11.10+ */
+    background: -ms-linear-gradient(90deg, rgba(153, 218, 255, 1) 0%, rgba(0, 128, 128, 1) 100%);
+    /* ie10+ */
+    background: linear-gradient(0deg, rgba(153, 218, 255, 1) 0%, rgba(0, 128, 128, 1) 100%);
+    /* w3c */
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#008080', endColorstr='#99DAFF', GradientType=0);
+    /* ie6-9 */
+    width: 100%;
+    height: inherit;
+}
+
+.canos {
+    height: 100%;
+    width: fit-content;
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.cano {
+    background: -moz-linear-gradient(0deg, rgba(17, 255, 0, 1) 0%, rgba(17, 255, 0, 1) 9%, rgba(17, 255, 0, 1) 10%, rgba(16, 242, 0, 1) 20%, rgba(14, 217, 0, 1) 30%, rgba(14, 209, 0, 1) 40%, rgba(13, 196, 0, 1) 50%, rgba(12, 179, 0, 1) 60%, rgba(11, 158, 0, 1) 70%, rgba(10, 145, 0, 1) 80%, rgba(8, 128, 0, 1) 90%);
+    /* ff3.6+ */
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%, rgba(17, 255, 0, 1)), color-stop(9%, rgba(17, 255, 0, 1)), color-stop(10%, rgba(17, 255, 0, 1)), color-stop(20%, rgba(16, 242, 0, 1)), color-stop(30%, rgba(14, 217, 0, 1)), color-stop(40%, rgba(14, 209, 0, 1)), color-stop(50%, rgba(13, 196, 0, 1)), color-stop(60%, rgba(12, 179, 0, 1)), color-stop(70%, rgba(11, 158, 0, 1)), color-stop(80%, rgba(10, 145, 0, 1)), color-stop(90%, rgba(8, 128, 0, 1)));
+    /* safari4+,chrome */
+    background: -webkit-linear-gradient(0deg, rgba(17, 255, 0, 1) 0%, rgba(17, 255, 0, 1) 9%, rgba(17, 255, 0, 1) 10%, rgba(16, 242, 0, 1) 20%, rgba(14, 217, 0, 1) 30%, rgba(14, 209, 0, 1) 40%, rgba(13, 196, 0, 1) 50%, rgba(12, 179, 0, 1) 60%, rgba(11, 158, 0, 1) 70%, rgba(10, 145, 0, 1) 80%, rgba(8, 128, 0, 1) 90%);
+    /* safari5.1+,chrome10+ */
+    background: -o-linear-gradient(0deg, rgba(17, 255, 0, 1) 0%, rgba(17, 255, 0, 1) 9%, rgba(17, 255, 0, 1) 10%, rgba(16, 242, 0, 1) 20%, rgba(14, 217, 0, 1) 30%, rgba(14, 209, 0, 1) 40%, rgba(13, 196, 0, 1) 50%, rgba(12, 179, 0, 1) 60%, rgba(11, 158, 0, 1) 70%, rgba(10, 145, 0, 1) 80%, rgba(8, 128, 0, 1) 90%);
+    /* opera 11.10+ */
+    background: -ms-linear-gradient(0deg, rgba(17, 255, 0, 1) 0%, rgba(17, 255, 0, 1) 9%, rgba(17, 255, 0, 1) 10%, rgba(16, 242, 0, 1) 20%, rgba(14, 217, 0, 1) 30%, rgba(14, 209, 0, 1) 40%, rgba(13, 196, 0, 1) 50%, rgba(12, 179, 0, 1) 60%, rgba(11, 158, 0, 1) 70%, rgba(10, 145, 0, 1) 80%, rgba(8, 128, 0, 1) 90%);
+    /* ie10+ */
+    background: linear-gradient(90deg, rgba(17, 255, 0, 1) 0%, rgba(17, 255, 0, 1) 9%, rgba(17, 255, 0, 1) 10%, rgba(16, 242, 0, 1) 20%, rgba(14, 217, 0, 1) 30%, rgba(14, 209, 0, 1) 40%, rgba(13, 196, 0, 1) 50%, rgba(12, 179, 0, 1) 60%, rgba(11, 158, 0, 1) 70%, rgba(10, 145, 0, 1) 80%, rgba(8, 128, 0, 1) 90%);
+    /* w3c */
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#11FF00', endColorstr='#088000', GradientType=1);
+    /* ie6-9 */
+    width: 140px;
+    border: 1px solid black;
+    position: relative;
+}
+
+.passaro {
+    background: url('../imgs/passaro.png');
+    background-size: 50px;
+    background-repeat: no-repeat;
+    position: absolute;
+    width: 50px;
+    height: 38px;
+    transition: all .15s ease-in;
+}
+
+.passaro.caindo {
+    transform: rotate(80deg);
+}
+
+.passaro.voando {
+    transform: rotate(-45deg);
+}
+
+.start {
+    font-family: 'Pixel';
+    font-size: 100pt;
+    text-transform: uppercase;
+    position: absolute;
+    cursor: pointer;
+    top: 300px;
+    padding: 20px 50px;
+    z-index: 500;
+    color: steelblue;
+    background-color: rgba(255, 255, 255, 0.705);
+}
