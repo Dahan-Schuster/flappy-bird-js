@@ -1,3 +1,7 @@
+/*************************
+ *  JOGO   
+ * ***********************/
+
 const tela = document.querySelector('[flappy]')
 
 const VELOCIDADE_MOVIMENTO_CANOS = 1 // ms (melhor 1ms)
@@ -6,9 +10,9 @@ const LIMITE_DA_TELA = -100 // px (melhor -100px)
 const PASSO_MOVIMENTO_CANOS = 1 // px (melhor 1px)
 const ESPACO_ENTRE_CANOS = 20 // % (melhor 20%)
 const TAMANH0_MAXIMO_CANO = 70 // % (melhor 70%)
-const MAXIMO_DE_CANOS_NA_TELA = 5 // n (melhor 4~5)
-const PASSO_VOO_PASSARO = 150 // px (melhor 15%)
-const PASSO_QUEDA_PASSARO = 20 // px (melhor 2%)
+const MAXIMO_DE_CANOS_NA_TELA = 8 // n (melhor > 5 && < 10)
+const PASSO_VOO_PASSARO = 200 // px (melhor 150px)
+const PASSO_QUEDA_PASSARO = 30 // px (melhor 20px)
 const VELOCIDADE_QUEDA_PASSARO = 50 // ms (melhor 50ms)
 
 function criarElementoPorObjeto(objeto) {
@@ -27,6 +31,19 @@ function criarElementoPorObjeto(objeto) {
 
     return elemento
 }
+
+const btnPlay = document.querySelector('[play]')
+btnPlay.onclick = play
+
+function play() {
+    btnPlay.style.display = 'none'
+    criarEConfigurarPassaro()
+    motorMoverECriarCanos()
+}
+
+/*************************
+ *  CANOS     
+ * ***********************/
 
 const criarCano = height => criarElementoPorObjeto({
     nome: 'div',
@@ -94,14 +111,23 @@ function motorMoverECriarCanos() {
     setInterval(adicionarCanosNaTela, VELOCIDADE_CRIACAO_CANOS)
 }
 
-const criarPassaro = () => criarElementoPorObjeto({
-    nome: 'div',
-    classes: ['passaro'],
-    estilos: {
-        top: '500px',
-        left: '100px'
+/*************************
+ *  PASSARO     
+ * ***********************/
+
+const criarPassaro = () => {
+    if (document.querySelectorAll('.passaro').length === 0) {
+        return criarElementoPorObjeto({
+            nome: 'div',
+            classes: ['passaro'],
+            estilos: {
+                top: '500px',
+                left: '100px'
+            }
+        })
     }
-})
+}
+
 
 var ultima_queda = 0;
 
@@ -111,48 +137,37 @@ function voarPassaro(passaro) {
     ultima_queda = setTimeout(() => {
         passaro.classList.remove('voando')
         passaro.classList.add('caindo')
-    }, 800)
+    }, 500)
 
     let alturaAtual = Number.parseInt(passaro.style.top)
     let novaAltura = alturaAtual - PASSO_VOO_PASSARO
     passaro.style.top = `${novaAltura}px`
 }
 
-function cairPassaro() {
-    let passaro = document.querySelector('.passaro')
-
+function cairPassaro(passaro) {
     let alturaAtual = Number.parseInt(passaro.style.top)
     let novaAltura = alturaAtual + PASSO_QUEDA_PASSARO
 
-    if (novaAltura > window.innerHeight) {
+    if (novaAltura > window.innerHeight - 20) {
         passaro.classList.remove('caindo')
     } else {
         passaro.style.top = `${novaAltura}px`
     }
-
 }
 
 function configurarEventListeners(passaro) {
+    window.onkeypress = () => voarPassaro(passaro)
+    
+}
 
-    window.onkeypress = function() {
-        voarPassaro(passaro)
-    }
-
-    setInterval(cairPassaro, VELOCIDADE_QUEDA_PASSARO)
+function comecarQuedaPassaro(passaro) {
+    setInterval(() => cairPassaro(passaro), VELOCIDADE_QUEDA_PASSARO)
 }
 
 function criarEConfigurarPassaro() {
     const passaro = criarPassaro()
+    comecarQuedaPassaro(passaro)
     configurarEventListeners(passaro)
 
     tela.appendChild(passaro)
-}
-
-const btnPlay = document.querySelector('[play]')
-btnPlay.onclick = play
-
-function play() {
-    btnPlay.style.display = 'none'
-    criarEConfigurarPassaro()
-    motorMoverECriarCanos()
 }
